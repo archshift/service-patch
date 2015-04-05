@@ -8,6 +8,7 @@ ret: .word 0
 @@-----------------------------------------------------------------------------
 
 .extern self_pid
+.extern kproc_codeset_offset
 
 .global patch_pid
 .type patch_pid, %function
@@ -18,7 +19,8 @@ patch_pid:
 
     ldr r1, =0xFFFF9004          @@ Load pointer to current KProcess
     ldr r1, [r1]
-    ldr r2, =0xB4                @@ Load KProcess PID offset
+    ldr r2, =kproc_codeset_offset
+    ldr r2, [r2]
 
     str r0, [r1, r2]             @@ *CURR_KPROC_PTR = 0
     pop {r1-r2, pc}
@@ -33,7 +35,8 @@ unpatch_pid:
     ldr r0, [r0]
     ldr r1, =self_pid
     ldr r1, [r1]
-    ldr r2, =0xB4               @@ 0xB4 - KProcess PID offset
+    ldr r2, =kproc_codeset_offset
+    ldr r2, [r2]
 
     str r1, [r0, r2]            @@ *CURR_KPROC_PTR = self_pid
 

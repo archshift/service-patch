@@ -30,19 +30,12 @@ typedef struct KCodeSet {
     /* 1C */ u8 padding1[0x5C - 0x1C];
     /* 5C */ u64 title_id;
 } KCodeSet;
-
-typedef struct KProcess {
-    /* 00 */ u8 padding0[0xB0 - 0x00];
-    /* B0 */ KCodeSet* code_set;
-    /* B4 */ u8 padding1[0x268 - 0xB4];
-} KProcess;
 #pragma pack(0)
 
 static_assert(sizeof(KBlockInfo) == 0x8, "KBlockInfo is the wrong size!");
 static_assert(sizeof(KLinkedListNode) == 0xC, "KLinkedListNode is the wrong size!");
 static_assert(sizeof(MemSectionInfo) == 0x14, "MemSectionInfo is the wrong size!");
 static_assert(sizeof(KCodeSet) == 0x64, "KCodeSet is the wrong size!");
-static_assert(sizeof(KProcess) == 0x268, "KProcess is the wrong size!");
 
 //-----------------------------------------------------------------------------
 

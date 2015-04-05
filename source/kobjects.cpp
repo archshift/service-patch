@@ -1,16 +1,12 @@
 #include "kobjects.h"
+#include "constants.h"
 
-static const u32 KMEM_START  = 0xDFF80000; 
-static const u32 KPROC_START = KMEM_START + 0x25730;
-static const u32 KPROC_SIZE  = 0x268;
-static const u32 KPROC_NUM   = 0x2C;
-static const u32 PAGE_SIZE   = 0x1000;
+#define PAGE_SIZE 0x1000
 
 KCodeSet* FindTitleCodeSet(u64 title_id)
 {
-    for (unsigned kproc_index = 0; kproc_index < KPROC_NUM; kproc_index++) {
-        KProcess* curr_kproc = (KProcess*)(KPROC_START + KPROC_SIZE * kproc_index);
-        KCodeSet* curr_codeset = curr_kproc->code_set;
+    for (unsigned kproc_index = 0; kproc_index < kproc_num; kproc_index++) {
+        KCodeSet* curr_codeset = (KCodeSet*)(kproc_start + kproc_size * kproc_index + kproc_codeset_offset);
         if (curr_codeset != nullptr && curr_codeset->title_id == title_id)
             return curr_codeset;
     }
