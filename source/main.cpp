@@ -11,26 +11,26 @@
 
 int main(int argc, char** argv)
 {
-	gfxInitDefault();
-	consoleInit(GFX_TOP, NULL);
-	GetVersionConstants();
+    gfxInitDefault();
+    consoleInit(GFX_TOP, NULL);
+    GetVersionConstants();
     PatchSrvAccess();
 
 // ONLY UNCOMMENT AFTER CUSTOMIZING PatchProcessWrapper
     // svcBackdoor(PatchProcessWrapper);
     // log("[0x%08X] - Patched process\n", ret);
 
-	// Main loop
-	while (aptMainLoop())
-	{
-		hidScanInput();
+    // Main loop
+    while (aptMainLoop())
+    {
+        hidScanInput();
 
-		u32 kDown = hidKeysDown();
-		if (kDown & KEY_START)
-			break;
-		gspWaitForVBlank();
-	}
+        u32 kDown = hidKeysDown();
+        if (kDown & KEY_START)
+            break;
+        gspWaitForVBlank();
+    }
 
-	gfxExit();
-	return 0;
+    gfxExit();
+    return 0;
 }
