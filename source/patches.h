@@ -5,13 +5,13 @@
 extern "C" {
 	extern int ret;
 
-    s32 patch_pid();
-    s32 unpatch_pid();
+    s32 PatchPid();
+    s32 UnpatchPid();
 
-    int patch_process();
-    s32 patch_process_wrapper();
+    int PatchProcess();
+    s32 PatchProcessWrapper();
 }
 
-void reinit_srv();
-void patch_srv_access();
+void ReinitSrv();
+void PatchSrvAccess();
 

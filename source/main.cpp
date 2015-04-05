@@ -14,9 +14,9 @@ int main(int argc, char** argv)
 	gfxInitDefault();
 	consoleInit(GFX_TOP, NULL);
 	GetVersionConstants();
-    patch_srv_access();
+    PatchSrvAccess();
 
-    svcBackdoor(patch_process_wrapper);
+    svcBackdoor(PatchProcessWrapper);
     log("[0x%08X] - Patched process\n", ret);
 
 	// Main loop

@@ -10,9 +10,9 @@ ret: .word 0
 .extern self_pid
 .extern kproc_codeset_offset
 
-.global patch_pid
-.type patch_pid, %function
-patch_pid:
+.global PatchPid
+.type PatchPid, %function
+PatchPid:
     cpsid aif
     push {r1-r2, lr}
     mov r0, #0
@@ -25,9 +25,9 @@ patch_pid:
     str r0, [r1, r2]             @@ *CURR_KPROC_PTR = 0
     pop {r1-r2, pc}
 
-.global unpatch_pid
-.type unpatch_pid, %function
-unpatch_pid:
+.global UnpatchPid
+.type UnpatchPid, %function
+UnpatchPid:
     cpsid aif
     push {r1-r2, lr}
 
@@ -45,15 +45,15 @@ unpatch_pid:
 
 @@-----------------------------------------------------------------------------
 
-.extern patch_process
+.extern PatchProcess
 
-.global patch_process_wrapper
-.type patch_process_wrapper, %function
-patch_process_wrapper:
+.global PatchProcessWrapper
+.type PatchProcessWrapper, %function
+PatchProcessWrapper:
     cpsid aif
     push {r1, lr}
     
-    blx patch_process
+    blx PatchProcess
 
     ldr r1, =ret
     str r0, [r1]

@@ -11,32 +11,32 @@
 
 u32 self_pid = 0;
 
-void reinit_srv()
+void ReinitSrv()
 {
     srvExit();
     srvInit();
 }
 
-void patch_srv_access()
+void PatchSrvAccess()
 {
     svcGetProcessId(&self_pid, 0xFFFF8001);
     printf("Current process id: %lu\n", self_pid);
 
     printf("Patching srv access...");
-    svcBackdoor(patch_pid);
-    reinit_srv();
+    svcBackdoor(PatchPid);
+    ReinitSrv();
 
     u32 new_pid;
     svcGetProcessId(&new_pid, 0xFFFF8001);
     printf("%s\n", new_pid == 0 ? "succeeded!" : "failed!");
 
     // Cleanup; won't take effect until srv is reinitialized
-    svcBackdoor(unpatch_pid);
+    svcBackdoor(UnpatchPid);
 }
 
 //-----------------------------------------------------------------------------
 
-int patch_process()
+int PatchProcess()
 {
     // Target title id
     static const u64 title_id = 0;
