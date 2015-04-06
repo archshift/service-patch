@@ -12,6 +12,7 @@
 int main(int argc, char** argv)
 {
     gfxInitDefault();
+    hbInit();
     consoleInit(GFX_TOP, NULL);
 
     SaveVersionConstants();
@@ -32,6 +33,7 @@ int main(int argc, char** argv)
         gspWaitForVBlank();
     }
 
+    hbExit();
     gfxExit();
     return 0;
 }

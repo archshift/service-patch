@@ -53,5 +53,6 @@ int PatchProcess()
         return 1;
     
     *(u32*)FindCodeOffsetKAddr(code_set, patch_offset) = patch_code;
+    HB_FlushInvalidateCache(); // Just to be sure!
     return 0;
 }
