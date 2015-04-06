@@ -14,11 +14,7 @@ int main(int argc, char** argv)
     gfxInitDefault();
     consoleInit(GFX_TOP, NULL);
 
-    if (!GetVersionConstants()) {
-        log("Warning, your platform is (either fully or partially) unsupported!\n");
-    }
-    
-
+    SaveVersionConstants();
     PatchSrvAccess();
 
 // ONLY UNCOMMENT AFTER CUSTOMIZING PatchProcessWrapper

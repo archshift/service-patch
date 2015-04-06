@@ -1,97 +1,61 @@
 #include "constants.h"
 
-u32 kmem_start  = 0; 
 u32 kproc_start = 0;
 u32 kproc_size  = 0;
 u32 kproc_num   = 0;
 u32 kproc_codeset_offset = 0;
 u32 kproc_pid_offset     = 0;
 
-bool GetVersionConstants()
+int __attribute__((noinline))
+FindKProcStart()
+{
+    // Get the vtable* of the current application's KProcess.
+    // The vtable* is the first u32 in the KProcess struct, and
+    // it's constant between all KProcesses.
+    u32 curr_kproc_addr = *(u32*)0xFFFF9004;
+    u32 kproc_vtable_ptr = *(u32*)curr_kproc_addr;
+
+    for (u32 itr_kproc_addr = curr_kproc_addr;; itr_kproc_addr -= kproc_size) {
+        u32 itr_kproc_vtable_ptr = *(u32*)itr_kproc_addr;
+        if (itr_kproc_vtable_ptr != kproc_vtable_ptr) {
+            // If the current iteration's vtable* doesn't match, we
+            // overran the KProcess list.
+            kproc_start = itr_kproc_addr + kproc_size;
+            return 0;
+        }
+    }
+}
+
+s32 __attribute__((naked))
+ScanKProcList()
+{
+    __asm__ __volatile__ ("cpsid aif");
+    FindKProcStart();
+}
+
+void SaveVersionConstants()
 {
     u32 kversion = *(vu32*)0x1FF80000; // KERNEL_VERSION register
 
     u8 is_n3ds = 0;
     APT_CheckNew3DS(NULL, &is_n3ds);
 
-    if (!is_n3ds || kversion < 0x022C0600) {
-        switch (kversion) {
-            case 0x02220000: // 2.34-0 4.1.0
-                kmem_start  = 0xEFF80000;
-                kproc_size  = 0x260;
-                kproc_codeset_offset = 0xA8;
-                kproc_pid_offset     = 0xAC;
-                break;
-            case 0x02230600: // 2.35-6 5.0.0
-                kmem_start  = 0xEFF80000;
-                kproc_size  = 0x260;
-                kproc_codeset_offset = 0xA8;
-                kproc_pid_offset     = 0xAC;
-                break;
-            case 0x02240000: // 2.36-0 5.1.0
-                kmem_start  = 0xEFF80000;
-                kproc_size  = 0x260;
-                kproc_codeset_offset = 0xA8;
-                kproc_pid_offset     = 0xAC;
-                break;
-            case 0x02250000: // 2.37-0 6.0.0
-                kmem_start  = 0xEFF80000;
-                kproc_size  = 0x260;
-                kproc_codeset_offset = 0xA8;
-                kproc_pid_offset     = 0xAC;
-                break;
-            case 0x02260000: // 2.38-0 6.1.0
-                kmem_start  = 0xEFF80000;
-                kproc_size  = 0x260;
-                kproc_codeset_offset = 0xA8;
-                kproc_pid_offset     = 0xAC;
-                break;
-            case 0x02270400: // 2.39-4 7.0.0
-                kmem_start  = 0xEFF80000;
-                kproc_size  = 0x260;
-                kproc_codeset_offset = 0xA8;
-                kproc_pid_offset     = 0xAC;
-                break;
-            case 0x02280000: // 2.40-0 7.2.0
-                kmem_start  = 0xEFF80000;
-                kproc_size  = 0x260;
-                kproc_codeset_offset = 0xA8;
-                kproc_pid_offset     = 0xAC;
-                break;
-            case 0x022C0600: // 2.44-6 8.0.0
-                kmem_start  = 0xDFF80000;
-                kproc_size  = 0x268;
-                kproc_num   = 0x2C;
-                kproc_codeset_offset = 0xB0;
-                kproc_pid_offset     = 0xB4;
-                break;
-            case 0x022E0000: // 2.26-0 9.0.0
-                kmem_start  = 0xDFF80000;
-                kproc_start = kmem_start + 0x25730;
-                kproc_size  = 0x268;
-                kproc_num   = 0x2C;
-                kproc_codeset_offset = 0xB0;
-                kproc_pid_offset     = 0xB4;
-                return true;
-        }
+    if (kversion < 0x022C0600) {
+        kproc_size = 0x260;
+        kproc_num  = 0x2C; // TODO: Verify
+        kproc_codeset_offset = 0xA8;
+        kproc_pid_offset     = 0xAC;
+    } else if (!is_n3ds) {
+        kproc_size = 0x268;
+        kproc_num  = 0x2C; // TODO: Verify
+        kproc_codeset_offset = 0xB0;
+        kproc_pid_offset     = 0xB4;
     } else {
-        switch (kversion) {
-            case 0x022C0600: // N3DS 2.44-6 8.0.0
-                kmem_start  = 0xDFF80000;
-                kproc_size  = 0x270;
-                kproc_num   = 0x2F;
-                kproc_codeset_offset = 0xB8;
-                kproc_pid_offset     = 0xBC;
-                break;
-            case 0x022E0000: // N3DS 2.26-0 9.0.0
-                kmem_start  = 0xDFF80000;
-                kproc_size = 0x270;
-                kproc_num = 0x2F;
-                kproc_codeset_offset = 0xB8;
-                kproc_pid_offset     = 0xBC;
-                break;
-        }
+        kproc_size = 0x270;
+        kproc_num  = 0x2F; // TODO: Verify
+        kproc_codeset_offset = 0xB8;
+        kproc_pid_offset     = 0xBC;
     }
 
-    return false;
+    svcBackdoor(ScanKProcList);
 }
