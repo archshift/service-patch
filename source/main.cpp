@@ -21,6 +21,7 @@ int main(int argc, char** argv)
 // ONLY UNCOMMENT AFTER CUSTOMIZING PatchProcessWrapper
     // svcBackdoor(PatchProcessWrapper);
     // log("[0x%08X] - Patched process\n", ret);
+    // HB_FlushInvalidateCache(); // Just to be sure!
 
     // Main loop
     while (aptMainLoop())
