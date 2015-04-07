@@ -6,7 +6,7 @@
 KCodeSet* FindTitleCodeSet(u64 title_id)
 {
     for (unsigned kproc_index = 0; kproc_index < kproc_num; kproc_index++) {
-        KCodeSet* curr_codeset = (KCodeSet*)(kproc_start + kproc_size * kproc_index + kproc_codeset_offset);
+        KCodeSet* curr_codeset = *(KCodeSet**)(kproc_start + kproc_size * kproc_index + kproc_codeset_offset);
         if (curr_codeset != nullptr && curr_codeset->title_id == title_id)
             return curr_codeset;
     }
