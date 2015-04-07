@@ -27,7 +27,9 @@ typedef struct MemSectionInfo {
 typedef struct KCodeSet {
     /* 00 */ u8 padding0[0x08 - 0x00];
     /* 08 */ MemSectionInfo text_info;
-    /* 1C */ u8 padding1[0x5C - 0x1C];
+    /* 1C */ u8 padding1[0x50 - 0x1C];
+    /* 50 */ char title_name[8];
+    /* 58 */ u8 padding2[0x5C - 0x58];
     /* 5C */ u64 title_id;
 } KCodeSet;
 #pragma pack(0)
@@ -45,6 +47,14 @@ static_assert(sizeof(KCodeSet) == 0x64, "KCodeSet is the wrong size!");
  * @return pointer to found KCodeSet
  */
 KCodeSet* FindTitleCodeSet(u64 title_id);
+
+/**
+ * Searches kernel memory for the KCodeSet matching a certain title name
+ * @param title_name Target title for which to find the codeset
+ * @param title_len Length of title_name string
+ * @return pointer to found KCodeSet
+ */
+KCodeSet* FindTitleCodeSet(const char* title_name, size_t title_len);
 
 /**
  * Finds the KAddr corresponding to a title's usermode code offset

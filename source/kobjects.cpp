@@ -1,4 +1,7 @@
 #include "kobjects.h"
+
+#include <cstring>
+
 #include "constants.h"
 
 #define PAGE_SIZE 0x1000
@@ -8,6 +11,16 @@ KCodeSet* FindTitleCodeSet(u64 title_id)
     for (unsigned kproc_index = 0; kproc_index < kproc_num; kproc_index++) {
         KCodeSet* curr_codeset = *(KCodeSet**)(kproc_start + kproc_size * kproc_index + kproc_codeset_offset);
         if (curr_codeset != nullptr && curr_codeset->title_id == title_id)
+            return curr_codeset;
+    }
+    return nullptr;
+}
+
+KCodeSet* FindTitleCodeSet(const char* title_name, size_t title_len)
+{
+    for (unsigned kproc_index = 0; kproc_index < kproc_num; kproc_index++) {
+        KCodeSet* curr_codeset = *(KCodeSet**)(kproc_start + kproc_size * kproc_index + kproc_codeset_offset);
+        if (curr_codeset != nullptr && memcmp(curr_codeset->title_name, title_name, title_len) == 0)
             return curr_codeset;
     }
     return nullptr;
