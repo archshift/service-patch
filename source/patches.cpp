@@ -4,12 +4,26 @@
 
 #include <3ds.h>
 
+#include "constants.h"
 #include "patches.h"
+#include "kernel11.h"
 #include "kobjects.h"
 
 //-----------------------------------------------------------------------------
 
 u32 self_pid = 0;
+
+int PatchPid()
+{
+    *(u32*)(curr_kproc_addr + kproc_pid_offset) = 0;
+    return 0;
+}
+
+int UnpatchPid()
+{
+    *(u32*)(curr_kproc_addr + kproc_pid_offset) = self_pid;
+    return 0;
+}
 
 void ReinitSrv()
 {
@@ -23,7 +37,7 @@ void PatchSrvAccess()
     printf("Current process id: %lu\n", self_pid);
 
     printf("Patching srv access...");
-    svcBackdoor(PatchPid);
+    KernelBackdoor(PatchPid);
     ReinitSrv();
 
     u32 new_pid;
@@ -31,7 +45,7 @@ void PatchSrvAccess()
     printf("%s\n", new_pid == 0 ? "succeeded!" : "failed!");
 
     // Cleanup; won't take effect until srv is reinitialized
-    svcBackdoor(UnpatchPid);
+    KernelBackdoor(UnpatchPid);
 }
 
 //-----------------------------------------------------------------------------

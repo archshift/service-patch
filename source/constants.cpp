@@ -1,5 +1,6 @@
 #include "constants.h"
 
+u32 curr_kproc_addr      = 0;
 u32 kproc_start = 0;
 u32 kproc_size  = 0;
 u32 kproc_num   = 0;
@@ -12,7 +13,6 @@ FindKProcStart()
     // Get the vtable* of the current application's KProcess.
     // The vtable* is the first u32 in the KProcess struct, and
     // it's constant between all KProcesses.
-    u32 curr_kproc_addr = *(u32*)0xFFFF9004;
     u32 kproc_vtable_ptr = *(u32*)curr_kproc_addr;
 
     for (u32 itr_kproc_addr = curr_kproc_addr;; itr_kproc_addr -= kproc_size) {
@@ -30,6 +30,7 @@ s32 __attribute__((naked))
 ScanKProcList()
 {
     __asm__ __volatile__ ("cpsid aif");
+    curr_kproc_addr = *(u32*)0xFFFF9004;
     FindKProcStart();
 }
 

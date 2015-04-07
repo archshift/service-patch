@@ -2,16 +2,10 @@
 
 #include <3ds.h>
 
-extern "C" {
-	extern int ret;
-
-    s32 PatchPid();
-    s32 UnpatchPid();
-
-    int PatchProcess();
-    s32 PatchProcessWrapper();
-}
-
+int PatchPid();
+int UnpatchPid();
 void ReinitSrv();
 void PatchSrvAccess();
+
+int PatchProcess();
 

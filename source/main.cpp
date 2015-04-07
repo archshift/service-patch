@@ -5,6 +5,7 @@
 #include <3ds.h>
 
 #include "constants.h"
+#include "kernel11.h"
 #include "patches.h"
 
 #define log(...) fprintf(stderr, __VA_ARGS__)
@@ -19,8 +20,7 @@ int main(int argc, char** argv)
     PatchSrvAccess();
 
 // ONLY UNCOMMENT AFTER CUSTOMIZING PatchProcessWrapper
-    // svcBackdoor(PatchProcessWrapper);
-    // log("[0x%08X] - Patched process\n", ret);
+    // log("[%08X] Patched process\n", KernelBackdoor(PatchProcess));
     // HB_FlushInvalidateCache(); // Just to be sure!
 
     // Main loop
