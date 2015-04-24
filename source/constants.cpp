@@ -1,5 +1,7 @@
 #include "constants.h"
 
+#include "kernel11.h"
+
 u32 curr_kproc_addr      = 0;
 u32 kproc_start = 0;
 u32 kproc_size  = 0;
@@ -7,8 +9,7 @@ u32 kproc_num   = 0;
 u32 kproc_codeset_offset = 0;
 u32 kproc_pid_offset     = 0;
 
-int __attribute__((noinline))
-FindKProcStart()
+void FindKProcStart()
 {
     // Get the vtable* of the current application's KProcess.
     // The vtable* is the first u32 in the KProcess struct, and
@@ -21,15 +22,13 @@ FindKProcStart()
             // If the current iteration's vtable* doesn't match, we
             // overran the KProcess list.
             kproc_start = itr_kproc_addr + kproc_size;
-            return 0;
+            return;
         }
     }
 }
 
-s32 __attribute__((naked))
-ScanKProcList()
+int ScanKProcList()
 {
-    __asm__ __volatile__ ("cpsid aif");
     curr_kproc_addr = *(u32*)0xFFFF9004;
     FindKProcStart();
 }
@@ -58,5 +57,5 @@ void SaveVersionConstants()
         kproc_pid_offset     = 0xBC;
     }
 
-    svcBackdoor(ScanKProcList);
+    KernelBackdoor(ScanKProcList);
 }

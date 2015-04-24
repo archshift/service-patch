@@ -36,7 +36,7 @@ u32 FindCodeOffsetKAddr(KCodeSet* code_set, u32 code_offset)
     KLinkedListNode* node = code_set->text_info.first_node;
 
     // Iterate through all the blocks in the codeset
-    do {
+    for (; node != nullptr; node = node->next) {
         KBlockInfo* block_info = (KBlockInfo*)node->data;
         u32 block_size = block_info->page_count * PAGE_SIZE;
 
@@ -46,8 +46,10 @@ u32 FindCodeOffsetKAddr(KCodeSet* code_set, u32 code_offset)
 
         // Current offset: amount of bytes searched so far
         curr_offset += block_size;
-        node = node->next;
-    } while (node->next != nullptr);
+
+        if (node == code_set->text_info.last_node)
+            break;
+    };
 
     return 0;
 }
