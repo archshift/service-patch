@@ -10,6 +10,7 @@ static s32 __attribute__((naked))
 KernelBackdoorTargetWrapper()
 {
     __asm__ __volatile__ (
+        "cpsid aif                  \t\n"
         "push {r4, lr}              \t\n"
 
         "ldr r0, =backdoor_callback \t\n"
